@@ -1,10 +1,14 @@
+"""
+These are unittests for the htmlnode.py
+"""
 import unittest
 
 from htmlnode import HTMLNode, LeafNode
 
-
 class TestHTMLNode(unittest.TestCase):
+    """Do I really have to put things here for the problems to go away?"""
     def test_to_html_props(self):
+        """Jesus it's going to make me do this for every method."""
         node = HTMLNode(
             "div",
             "hello",
@@ -17,6 +21,10 @@ class TestHTMLNode(unittest.TestCase):
         )
 
     def test_props_to_html_single_attribute(self):
+        """
+        Well I guess I will have to start making this a habit or else 
+        I am going to lose my shit
+        """
         node = HTMLNode(
             "span",
             "world",
@@ -112,7 +120,7 @@ class TestHTMLNode(unittest.TestCase):
             {"class": "primary"},
         )
         self.assertEqual(
-            node.__repr__(),
+            repr(node),
             "HTMLNode(p, What a strange world, children: None, {'class': 'primary'})",
         )
 
@@ -125,8 +133,9 @@ class TestHTMLNode(unittest.TestCase):
             props={"id": "container"}
         )
         self.assertEqual(
-            node.__repr__(),
-            "HTMLNode(div, Container, children: [HTMLNode(span, Nested, children: None, None)], {'id': 'container'})"
+            repr(node),
+            "HTMLNode(div, Container, children: [HTMLNode(span, Nested, children: None, None)]" \
+            ", {'id': 'container'})"
         )
 
     def test_repr_minimal(self):
@@ -135,7 +144,7 @@ class TestHTMLNode(unittest.TestCase):
             "Title"
         )
         self.assertEqual(
-            node.__repr__(),
+            repr(node),
             "HTMLNode(h1, Title, children: None, None)"
         )
 
@@ -147,7 +156,7 @@ class TestHTMLNode(unittest.TestCase):
             props={}
         )
         self.assertEqual(
-            node.__repr__(),
+            repr(node),
             "HTMLNode(ul, None, children: [], {})"
         )
 

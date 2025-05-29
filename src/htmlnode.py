@@ -15,7 +15,7 @@ class HTMLNode:
         for prop in self.props:
             props_html += f' {prop}="{self.props[prop]}"'
         return props_html
-    
+
     def __repr__(self):
         return f"HTMLNode({self.tag}, {self.value}, children: {self.children}, {self.props})"
 
@@ -30,7 +30,6 @@ class LeafNode(HTMLNode):
         if self.tag is None:
             return self.value
         return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
-    
+
     def __repr__(self):
         return f"LeafNode({self.tag}, {self.value}, {self.props})"
-        
