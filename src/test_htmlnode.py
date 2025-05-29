@@ -3,7 +3,7 @@ These are unittests for the htmlnode.py
 """
 import unittest
 
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 class TestHTMLNode(unittest.TestCase):
     """Do I really have to put things here for the problems to go away?"""
@@ -163,6 +163,74 @@ class TestHTMLNode(unittest.TestCase):
     def test_leaf_to_html_p(self):
         node = LeafNode("p", "Hello, world!")
         self.assertEqual(node.to_html(), "<p>Hello, world!</p>")
+
+    def test_to_html_with_children(self):
+        child_node = LeafNode("span", "child")
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(parent_node.to_html(), "<div><span>child</span></div>")
+
+    def test_to_html_with_grandchildren(self):
+        grandchild_node = LeafNode("b", "grandchild")
+        child_node = ParentNode("span", [grandchild_node])
+        parent_node = ParentNode("div", [child_node])
+        self.assertEqual(
+            parent_node.to_html(),
+            "<div><span><b>grandchild</b></span></div>",
+        )
+
+    def test_to_html_single_leaf_node(self):
+        node = LeafNode("p", "Hello")
+        self.assertEqual(node.to_html(), "<p>Hello</p>")
+
+    def test_to_html_empty_parent_node(self):
+        node = ParentNode("div", [])
+        self.assertEqual(node.to_html(), "<div></div>")
+
+    def test_to_html_multiple_children(self):
+        child1 = LeafNode("span", "one")
+        child2 = LeafNode("span", "two")
+        parent = ParentNode("div", [child1, child2])
+        self.assertEqual(parent.to_html(), "<div><span>one</span><span>two</span></div>")
+
+    def test_to_html_deeply_nested_structure(self):
+        node = ParentNode("div", [
+            ParentNode("section", [
+                ParentNode("article", [
+                    LeafNode("p", "Deep text")
+                ])
+            ])
+        ])
+        self.assertEqual(node.to_html(), "<div><section><article><p>Deep text</p></article></section></div>")
+
+    def test_to_html_mixed_node_types(self):
+        node = ParentNode("ul", [
+            LeafNode("li", "Item 1"),
+            ParentNode("li", [
+                LeafNode("span", "Item 2 with detail")
+            ])
+        ])
+        self.assertEqual(node.to_html(), "<ul><li>Item 1</li><li><span>Item 2 with detail</span></li></ul>")
+
+    def test_leafnode_raises_value_error_when_value_is_none(self):
+        with self.assertRaises(ValueError) as context:
+            LeafNode("p", None).to_html()
+        self.assertEqual(str(context.exception), "invalid HTML: no value")
+
+    def test_parentnode_raises_value_error_when_tag_is_none(self):
+        with self.assertRaises(ValueError) as context:
+            ParentNode(None, [LeafNode("p", "Text")]).to_html()
+        self.assertEqual(str(context.exception), "invalid HTML: no tag")
+
+    def test_parentnode_raises_value_error_when_children_is_none(self):
+        with self.assertRaises(ValueError) as context:
+            ParentNode("div", None).to_html()
+        self.assertEqual(str(context.exception), "invalid HTML: no children")
+
+    def test_htmlnode_to_html_not_implemented(self):
+        node = HTMLNode()
+        with self.assertRaises(NotImplementedError) as context:
+            node.to_html()
+        self.assertIn("Child classes will override", str(context.exception))
 
 if __name__ == "__main__":
     unittest.main()
